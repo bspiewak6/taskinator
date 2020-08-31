@@ -41,12 +41,9 @@ var createTaskEl = function(taskDataObj) {
     // create list item
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
-
-    // add task id as a custom attribute and draggable
     listItemEl.setAttribute("data-task-id", taskIdCounter);
     listItemEl.setAttribute("draggable", "true");
 
-    // create div to hold task info and add to list item
     var taskInfoEl = document.createElement("div");
     taskInfoEl.className = "task-info";
     taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
@@ -80,6 +77,7 @@ var createTaskEl = function(taskDataObj) {
     // save tasks to localStorage
     saveTasks();
 
+     // increase task counter for next unique task id
     taskIdCounter++;
 };
 
@@ -125,7 +123,7 @@ var createTaskActions = function(taskId) {
     return actionContainerEl
 };
 
-formEl.addEventListener("submit", taskFormHandler);
+
 
 var taskButtonHandler = function(event) {
     // get target element from event
@@ -143,7 +141,7 @@ var taskButtonHandler = function(event) {
     }
 };
 
-pageContentEl.addEventListener("click", taskButtonHandler);
+
 
 var deleteTask = function(taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -296,23 +294,32 @@ var saveTasks = function() {
 };
 
 var loadTasks = function() {
-    // Gets task items from localStorage
-    localStorage.getItem("tasks");
-    
-
-    if (tasks = 0) {
-        (tasks === null)
-        return false
+    var savedTasks = localStorage.getItem("tasks");
+    // if there are no tasks, set tasks to an empty array and return out of the function
+    if (!savedTasks) {
+      return false;
     }
-    tasks = JSON.parse(tasks);
-    console.log(tasks);
+    console.log("Saved tasks found!");
+    // parse into array of objects
+    savedTasks = JSON.parse(savedTasks);
+  
+    // loop through savedTasks array
+    for (var i = 0; i < savedTasks.length; i++) {
+      // pass each task object into the `createTaskEl()` function
+      createTaskEl(savedTasks[i]);
+    }
+  };
 
-    // Converts tasks from the stringified format back into an array of objects
+// create a new task
+formEl.addEventListener("submit", taskFormHandler);
 
-    // Iterates through tasks array and creates task elements on the page from it
-};
+// for edit and delete buttons
+pageContentEl.addEventListener("click", taskButtonHandler);
 
+// for changing the status
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
+// for dragging
 pageContentEl.addEventListener("dragstart", dragTaskHandler);
 pageContentEl.addEventListener("dragover", dropZoneHandler);
 pageContentEl.addEventListener("drop", dropTaskHandler);
